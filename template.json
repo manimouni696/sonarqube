@@ -1,0 +1,90 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationInsightsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Component name which defines the type of application being monitored."
+            }
+        },
+        "logAnalyticsName": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "Optional name of the Log Analytics workspace. If specified then the Application Insights data will be stored in the Log Analytics workspace."
+            }
+        },
+        "logAnalyticsResourceGroupName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional name for the resource group that contains the Log Analytics workspace. Defaults to the Application Insights resource group."
+            }
+        },
+        "logAnalyticsSubscriptionID": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional ID of the subscription that contains the Log Analytics workspace. Defaults to the Application Insights subscription ID."
+            }
+        },
+        "resourceTags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags to help identify the resources."
+            }
+        }
+    },
+    "variables": {
+        "defaultPropertiesSection": {
+            "Application_Type": "web"
+        },
+        "logAnalyticsPropertiesSection": {
+            "ApplicationId": "[parameters('applicationInsightsName')]",
+            "Application_Type": "type",
+            "Flow_Type": "Redfield",
+            "Request_Source": "Custom",
+            "WorkspaceResourceId": "[if(empty(parameters('logAnalyticsName')), json('null'), resourceId(parameters('logAnalyticsSubscriptionID'), parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName')))]"
+        }
+    },
+    "resources": [
+        {
+            "comments": "Deploys the application insights workspace.",
+            "name": "[parameters('applicationInsightsName')]",
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2019-03-01",
+            "location": "Global",
+            "properties": {
+                "automationRunbookReceivers": [],
+                "azureAppPushReceivers": [],
+                "azureFunctionReceivers": [],
+                "emailReceivers": [],
+                "enabled": true,
+                "groupShortName": "SmartDetect",
+                "itsmReceivers": [],
+                "logicAppReceivers": [],
+                "smsReceivers": [],
+                "voiceReceivers": [],
+                "webhookReceivers": []
+            },
+            "tags": "[parameters('resourceTags')]"
+        },
+        {
+            "comments": "Deploys the component logging for the application insights workspace.",
+            "name": "[parameters('applicationInsightsName')]",
+            "type": "microsoft.insights/components",
+            "apiVersion": "2020-02-02-preview",
+            "location": "[resourceGroup().location]",
+            "kind": "web",
+            "properties": "[if(empty(parameters('logAnalyticsName')), variables('defaultPropertiesSection'), variables('logAnalyticsPropertiesSection'))]",
+            "tags": "[parameters('resourceTags')]"
+        }
+    ],
+    "outputs": {
+        "applicationInsightsInstrumentationKey": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))).InstrumentationKey]"
+        }
+    }
+}

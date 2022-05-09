@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "applicationInsightsName": {
+      "value": "$(applicationInsightsName)"
+    },
+    "appName": {
+      "value": "$(appName)"
+    },
+    "subscriptionId": {
+      "value": "$(subscriptionId)"
+    },
+    "Location": {
+      "value": "$(Location)"
+    },
+    "hostingPlanName": {
+      "value": "$(hostingPlanName)"
+    },
+    "serverFarmResourceGroup": {
+      "value": "$(serverFarmResourceGroup)"
+    },
+    "alwaysOn": {
+      "value": false
+    },
+    "sku": {
+      "value": "$(sku)"
+    },
+    "skuCode": {
+      "value": "$(skuCode)"
+    },
+    "workerSize": {
+      "value": "$(workerSize)"
+    },
+    "workerSizeId": {
+      "value": "$(workerSizeId)"
+    },
+    "numberOfWorkers": {
+      "value": "$(numberOfWorkers)"
+    },
+    "currentStack": {
+      "value": "$(currentStack)"
+    },
+    "phpVersion": {
+      "value": "$(phpVersion)"
+    },
+    "netFrameworkVersion": {
+      "value": "$(netFrameworkVersion)"
+    }
+  }
+}
